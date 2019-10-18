@@ -1,6 +1,8 @@
 params.reads = "$baseDir/data/*_{1,2}.fastq.gz"
 params.genome = "$baseDir/data/genome.fa"
 params.annotation = "$baseDir/data/annotation.gtf"
+params.outdir = 'results'
+params.unit = 'TPM'
 
 genomeFile = file(params.genome)
 annotationFile = file(params.annotation)
@@ -46,6 +48,7 @@ process transcriptomeIndex {
 
 process mapping {
     tag { prefix }
+    publishDir { "${params.outdir}/${task.process}" }
 
     input:
     file index from genomeIndexChannel
@@ -70,9 +73,16 @@ process mapping {
 }
 
 process quantification {
+    tag { prefix }
+    publishDir { "${params.outdir}/${task.process}" }
+
     input:
     file transcriptomeIndex from transcriptomeIndexChannel
     set prefix, file(transcriptomeAlignments) from transcriptomeAlignmentsChannel
+
+    output:
+    file "${prefix}.genes.results" into geneQuantificationChannel
+    file "${prefix}.isoforms.results" into isoformQuantificationChannel
 
     """
     rsem-calculate-expression --num-threads ${task.cpus} \
@@ -86,4 +96,51 @@ process quantification {
                               $transcriptomeIndex/RSEMref \
                               $prefix
     """
+}
+
+process matrix {
+    publishDir { "${params.outdir}/${task.process}" }
+    echo true
+
+    input:
+    file quantification from geneQuantificationChannel.collect().sort{ it.simpleName }
+
+    output:
+    file outputMatrix
+
+    script:
+    files = quantification.collect { "'${it.name}'" }.join(',')
+    outputMatrix = "mouse.gene.matrix.${params.unit}.tsv"
+    """
+    #!/usr/bin/env python
+    import csv
+    import os
+
+    d = {}
+    samples = set()
+
+    for f in [ ${files} ]:
+        with open(f) as fd:
+            sample = os.path.basename(f).split('.')[0]
+            samples.add(sample)
+            csvfile = csv.DictReader(fd, delimiter='\t')
+            for line in csvfile:
+                element_id = line['gene_id']
+                element_value_list = []
+                v = line['${params.unit}']
+                element_value = float(v) if v != "NA" else "NA"
+                element_value_list += [str(element_value)]
+                d.setdefault(element_id, {}).setdefault(sample, ",".join(element_value_list))
+
+    f = open('${outputMatrix}','w')
+
+    f.write('\\t'.join(sorted(samples, key=lambda x: x.lower()))+'\\n')
+    for element in sorted(d.iterkeys()):
+        values = d[element]
+        f.write(element+'\\t')
+        missing_value = 'NA'
+        f.write('\\t'.join(str(values.get(s, missing_value)) for s in sorted(samples, key=lambda x: x.lower()))+'\\n')
+    f.close()
+    """
+
 }

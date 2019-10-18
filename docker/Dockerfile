@@ -26,7 +26,7 @@ FROM grapenf/base
 LABEL author.name="Emilio Palumbo"
 LABEL author.email="emilio.palumbo@crg.eu"
 
-RUN apk add --no-cache perl
+RUN apk add --no-cache perl python
 
 # STAR
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libgomp.so.1 /usr/glibc-compat/lib/
