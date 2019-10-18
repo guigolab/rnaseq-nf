@@ -20,7 +20,7 @@ An example pipeline for quantification of genomic features from short read data 
 
         ./nextflow run guigolab/rnaseq-nf -with-docker
         
-4. When the execution completes, pipeline results can be found inside the `result` folder
+4. When the execution completes, pipeline results can be found inside the `results` folder
 	
 Note: the very first time you execute it, it will take a few minutes to download the pipeline from this GitHub repository and the the associated Docker images needed to execute the pipeline.  
 
