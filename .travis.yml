@@ -1,0 +1,13 @@
+dist: trusty
+
+services:
+  - docker
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+script:
+  - curl -s https://get.nextflow.io | bash
+  - ./nextflow run . -with-docker
