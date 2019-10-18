@@ -21,11 +21,11 @@ process genomeIndex {
 
     """
     mkdir -p genomeIndex
-    STAR --runThreadN ${task.cpus} \
-         --runMode genomeGenerate \
-         --genomeDir genomeIndex \
-         --genomeFastaFiles $genome \
-         --sjdbGTFfile $annotation \
+    STAR --runThreadN ${task.cpus} \\
+         --runMode genomeGenerate \\
+         --genomeDir genomeIndex \\
+         --genomeFastaFiles $genome \\
+         --sjdbGTFfile $annotation \\
          --genomeSAindexNbases 11
     """
 }
@@ -40,8 +40,8 @@ process transcriptomeIndex {
 
     """
     mkdir -p transcriptomeIndex
-    rsem-prepare-reference --gtf $annotation \
-                           $genome \
+    rsem-prepare-reference --gtf $annotation \\
+                           $genome \\
                            transcriptomeIndex/RSEMref
     """
 }
@@ -59,15 +59,15 @@ process mapping {
     set prefix, file('*.toTranscriptome.out.bam') into transcriptomeAlignmentsChannel
 
     """
-    STAR --runThreadN ${task.cpus} \
-         --genomeDir $index \
-         --readFilesIn $reads \
-         --outSAMunmapped Within \
-         --outFilterType BySJout \
-         --outSAMattributes NH HI AS NM MD \
-         --readFilesCommand pigz -p${task.cpus} -dc \
-         --outSAMtype BAM SortedByCoordinate \
-         --quantMode TranscriptomeSAM \
+    STAR --runThreadN ${task.cpus} \\
+         --genomeDir $index \\
+         --readFilesIn $reads \\
+         --outSAMunmapped Within \\
+         --outFilterType BySJout \\
+         --outSAMattributes NH HI AS NM MD \\
+         --readFilesCommand pigz -p${task.cpus} -dc \\
+         --outSAMtype BAM SortedByCoordinate \\
+         --quantMode TranscriptomeSAM \\
          --outFileNamePrefix ${prefix}_
     """
 }
@@ -85,15 +85,15 @@ process quantification {
     file "${prefix}.isoforms.results" into isoformQuantificationChannel
 
     """
-    rsem-calculate-expression --num-threads ${task.cpus} \
-                              --bam \
-                              --paired-end \
-                              --estimate-rspd \
-                              --forward-prob 0 \
-                              --no-bam-output \
-                              --seed 12345 \
-                              $transcriptomeAlignments \
-                              $transcriptomeIndex/RSEMref \
+    rsem-calculate-expression --num-threads ${task.cpus} \\
+                              --bam \\
+                              --paired-end \\
+                              --estimate-rspd \\
+                              --forward-prob 0 \\
+                              --no-bam-output \\
+                              --seed 12345 \\
+                              $transcriptomeAlignments \\
+                              $transcriptomeIndex/RSEMref \\
                               $prefix
     """
 }
