@@ -1,6 +1,6 @@
 # RNA-seq pipeline
 
-[![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.24.0-brightgreen.svg)](http://nextflow.io)
+[![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.07.0-brightgreen.svg)](http://nextflow.io)
 [![Build Status](https://travis-ci.org/guigolab/rnaseq-nf.svg?branch=master)](https://travis-ci.org/guigolab/rnaseq-nf)
 
 An example pipeline for quantification of genomic features from short read data implemented with Nextflow.
