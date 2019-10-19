@@ -10,4 +10,4 @@ jdk:
 
 script:
   - curl -s https://get.nextflow.io | bash
-  - ./nextflow run . -with-docker
+  - ./nextflow run . -profile standard,travis
