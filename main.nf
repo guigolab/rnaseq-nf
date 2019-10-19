@@ -2,13 +2,15 @@ params.reads = "$baseDir/data/*_{1,2}.fastq.gz"
 params.genome = "$baseDir/data/genome.fa"
 params.annotation = "$baseDir/data/annotation.gtf"
 params.outdir = 'results'
-params.unit = 'TPM'
+params.units = [ 'expected_count', 'TPM' ]
 
 genomeFile = file(params.genome)
 annotationFile = file(params.annotation)
+units = [ params.units ].flatten()
 
 Channel
-    .fromFilePairs(params.reads)
+    .fromFilePairs(params.reads, checkExists:true)
+    .ifEmpty{ error("No input files found") }
     .set { readsChannel }
 
 process genomeIndex {
@@ -99,10 +101,11 @@ process quantification {
 }
 
 process matrix {
+    tag { unit }
     publishDir { "${params.outdir}/${task.process}" }
-    echo true
 
     input:
+    each unit from units
     file quantification from geneQuantificationChannel.collect().sort{ it.simpleName }
 
     output:
@@ -110,7 +113,7 @@ process matrix {
 
     script:
     files = quantification.collect { "'${it.name}'" }.join(',')
-    outputMatrix = "mouse.gene.matrix.${params.unit}.tsv"
+    outputMatrix = "mouse.gene.matrix.${unit}.tsv"
     """
     #!/usr/bin/env python
     import csv
@@ -127,7 +130,7 @@ process matrix {
             for line in csvfile:
                 element_id = line['gene_id']
                 element_value_list = []
-                v = line['${params.unit}']
+                v = line['${unit}']
                 element_value = float(v) if v != "NA" else "NA"
                 element_value_list += [str(element_value)]
                 d.setdefault(element_id, {}).setdefault(sample, ",".join(element_value_list))
