@@ -59,6 +59,7 @@ process mapping {
     output:
     set prefix, file('*.sortedByCoord.out.bam') into genomeAlignmentsChannel
     set prefix, file('*.toTranscriptome.out.bam') into transcriptomeAlignmentsChannel
+    set prefix, file('*Log.final.out')
 
     """
     STAR --runThreadN ${task.cpus} \\
