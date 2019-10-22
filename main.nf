@@ -114,7 +114,8 @@ process matrix {
 
     script:
     files = quantification.collect { "'${it.name}'" }.join(',')
-    outputMatrix = "mouse.gene.matrix.${unit}.tsv"
+    prefix = quantification[0].simpleName.split("_")[0..1].join("_")
+    outputMatrix = "${prefix}.gene.matrix.${unit}.tsv"
     """
     #!/usr/bin/env python
     import csv
