@@ -23,7 +23,44 @@ An example pipeline for quantification of genomic features from short read data 
         
 4. When the execution completes, pipeline results can be found inside the `results` folder
 	
-Note: the very first time you execute it, it will take a few minutes to download the pipeline from this GitHub repository and the the associated Docker images needed to execute the pipeline.  
+Note: the very first time you execute it, it will take a few minutes to download the pipeline from this GitHub repository and the the associated Docker images needed to execute the pipeline.
+
+## Pipeline results
+
+The processing output files are stored in a folder named `results`
+inside the pipeline working folder. The structure of the output directory
+is as follows:
+
+``` bash
+results
+├── mapping
+│   ├── mouse_cns_E14_rep1_Aligned.sortedByCoord.out.bam
+│   ├── mouse_cns_E14_rep1_Aligned.toTranscriptome.out.bam
+│   ├── mouse_cns_E14_rep1_Log.final.out
+│   ├── mouse_cns_E14_rep2_Aligned.sortedByCoord.out.bam
+│   ├── mouse_cns_E14_rep2_Aligned.toTranscriptome.out.bam
+│   ├── mouse_cns_E14_rep2_Log.final.out
+│   ├── mouse_cns_E18_rep1_Aligned.sortedByCoord.out.bam
+│   ├── mouse_cns_E18_rep1_Aligned.toTranscriptome.out.bam
+│   ├── mouse_cns_E18_rep1_Log.final.out
+│   ├── mouse_cns_E18_rep2_Aligned.sortedByCoord.out.bam
+│   ├── mouse_cns_E18_rep2_Aligned.toTranscriptome.out.bam
+│   └── mouse_cns_E18_rep2_Log.final.out
+├── matrix
+│   ├── mouse_cns.gene.matrix.TPM.tsv
+│   └── mouse_cns.gene.matrix.expected_count.tsv
+└── quantification
+    ├── mouse_cns_E14_rep1.genes.results
+    ├── mouse_cns_E14_rep1.isoforms.results
+    ├── mouse_cns_E14_rep2.genes.results
+    ├── mouse_cns_E14_rep2.isoforms.results
+    ├── mouse_cns_E18_rep1.genes.results
+    ├── mouse_cns_E18_rep1.isoforms.results
+    ├── mouse_cns_E18_rep2.genes.results
+    └── mouse_cns_E18_rep2.isoforms.results
+
+3 directories, 22 files
+```
 
 ## Cluster support
 
