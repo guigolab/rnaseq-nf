@@ -50,7 +50,7 @@ process transcriptomeIndex {
 
 process mapping {
     tag { prefix }
-    publishDir { "${params.outdir}/${task.process}" }
+    publishDir { "${params.outdir}/${task.process}" }, mode: 'link'
 
     input:
     file index from genomeIndexChannel
@@ -77,7 +77,7 @@ process mapping {
 
 process quantification {
     tag { prefix }
-    publishDir { "${params.outdir}/${task.process}" }
+    publishDir { "${params.outdir}/${task.process}" }, mode: 'link'
 
     input:
     file transcriptomeIndex from transcriptomeIndexChannel
@@ -103,7 +103,7 @@ process quantification {
 
 process matrix {
     tag { unit }
-    publishDir { "${params.outdir}/${task.process}" }
+    publishDir { "${params.outdir}/${task.process}" }, mode: 'link'
 
     input:
     each unit from units
